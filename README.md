@@ -11,6 +11,7 @@ This is the nest.js back-end part of the blog project.
    - JWT_SECRET
   - run `pnpm push` to load the mysql
   - run `pnpm start:dev`
+  - optionally run `pnpm studio` to access drizzle-kit studio
 
 #### Apis
 - `/auth/signup`
