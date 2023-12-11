@@ -11,3 +11,9 @@ This is the nest.js back-end part of the blog project.
    - JWT_SECRET
   - run `pnpm push` to load the mysql
   - run `pnpm start:dev`
+
+#### Apis
+- `/auth/signup`
+- `/auth/login` obtain pair of token
+- `/auth/refresh` to get new pair of token wiht refresh token
+- `/users/me` to get current user
