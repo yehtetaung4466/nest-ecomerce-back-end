@@ -9,7 +9,7 @@ This is the nest.js back-end part of the blog project.
  - ##### Set up the env variables
    - DB_URL
    - JWT_SECRET
-  - run `pnpm push` to load the mysql
+  - run `pnpm push` to load the postgresql
   - run `pnpm start:dev`
   - optionally run `pnpm studio` to access drizzle-kit studio
 
