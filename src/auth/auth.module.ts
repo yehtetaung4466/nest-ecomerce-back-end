@@ -3,7 +3,6 @@ import { PassportModule } from '@nestjs/passport';
 import { GoogleStrategy } from '../strategies/google.strategy';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { DrizzleService } from 'src/drizzle/drizzle.service';
 import { AuthGoogleService } from './auth.google.service';
 import { JwtService } from './jwt.service';
 import { DrizzleModule } from 'src/drizzle/drizzle.module';
@@ -15,7 +14,6 @@ import { JwtRefreshTokenStrategy } from 'src/strategies/jwtRefresh.strategy';
   providers: [
     AuthService,
     GoogleStrategy,
-    DrizzleService,
     AuthGoogleService,
     JwtService,
     JwtStrategy,
