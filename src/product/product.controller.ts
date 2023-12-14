@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { memoryStorage } from 'multer';
 import { ProductDto } from './dto/product.dto';
 import * as uuid from 'uuid';
 @Controller('products')
@@ -18,14 +18,7 @@ export class ProductController {
   @Post()
   @UseInterceptors(
     FileInterceptor('image', {
-      storage: diskStorage({
-        filename: (req, file, callback) => {
-          const extension = file.originalname.split('.').pop();
-          const newFileName = `products_${uuid.v4()}.${extension}`;
-          file.originalname = newFileName;
-          callback(null, file.originalname);
-        },
-      }),
+      storage: memoryStorage(),
     }),
   )
   async uploadProducts(
@@ -35,7 +28,10 @@ export class ProductController {
     if (!file) {
       throw new BadRequestException('product image is expected');
     }
-    await this.productService.makeNewProduct(
+    const extension = file.originalname.split('.').pop();
+    const newFileName = `products_${uuid.v4()}.${extension}`;
+    file.originalname = newFileName;
+    return await this.productService.makeNewProduct(
       file,
       product.name,
       product.price,
