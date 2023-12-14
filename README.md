@@ -18,3 +18,4 @@ This is the nest.js back-end part of the blog project.
 - `/auth/login` obtain pair of token
 - `/auth/refresh` to get new pair of token wiht refresh token
 - `/users/me` to get current user
+- `/products` to add new products
