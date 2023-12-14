@@ -14,8 +14,9 @@ This is the nest.js back-end part of the blog project.
   - optionally run `pnpm studio` to access drizzle-kit studio
 
 #### Apis
-- `/auth/signup`
-- `/auth/login` obtain pair of token
-- `/auth/refresh` to get new pair of token wiht refresh token
-- `/users/me` to get current user
-- `/products` to add new products
+- post `/auth/signup`
+- post `/auth/login` obtain pair of token
+- post `/auth/refresh` to get new pair of token wiht refresh token
+- get `/users/me` to get current user
+- get,post `/products` to add new products or get all products
+- get `/products/{productId}` to get specific product

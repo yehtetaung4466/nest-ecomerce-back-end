@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { DrizzleService } from 'src/drizzle/drizzle.service';
 import { products } from 'src/drizzle/schema';
@@ -11,7 +12,19 @@ import { eq } from 'drizzle-orm';
 @Injectable()
 export class ProductService {
   constructor(private readonly drizzleService: DrizzleService) {}
-
+  async getAllProducts() {
+    const products = await this.drizzleService.db.query.products.findMany();
+    return products;
+  }
+  async getProductById(id: number) {
+    const product = await this.drizzleService.db.query.products.findFirst({
+      where: eq(products.id, id),
+    });
+    if (!product) {
+      throw new NotFoundException('product not found');
+    }
+    return product;
+  }
   async makeNewProduct(
     file: Express.Multer.File,
     name: string,

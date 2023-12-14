@@ -2,6 +2,9 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
+  Param,
+  ParseIntPipe,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -37,5 +40,15 @@ export class ProductController {
       product.price,
       product.rating,
     );
+  }
+  @Get()
+  async retrieveAllProducts() {
+    return this.productService.getAllProducts();
+  }
+  @Get(':productId')
+  async retrieveOneProduct(
+    @Param('productId', ParseIntPipe) productId: number,
+  ) {
+    return this.productService.getProductById(productId);
   }
 }
