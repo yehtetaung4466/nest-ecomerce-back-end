@@ -20,3 +20,4 @@ This is the nest.js back-end part of the blog project.
 - get `/users/me` to get current user
 - get,post `/products` to add new products or get all products
 - get `/products/{productId}` to get specific product
+- get `/products/images/{productId}` to see product image

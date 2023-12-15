@@ -25,6 +25,16 @@ export class ProductService {
     }
     return product;
   }
+  async getImageById(id: number) {
+    const product = await this.drizzleService.db.query.products.findFirst({
+      where: eq(products.id, id),
+      columns: {
+        image: true,
+      },
+    });
+    if (!product) throw new NotFoundException('image not found');
+    return product.image;
+  }
   async makeNewProduct(
     file: Express.Multer.File,
     name: string,

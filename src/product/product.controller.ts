@@ -6,6 +6,8 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Res,
+  StreamableFile,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -14,6 +16,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { ProductDto } from './dto/product.dto';
 import * as uuid from 'uuid';
+import { join } from 'path';
+import { createReadStream } from 'fs';
+import { Response } from 'express';
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -50,5 +55,15 @@ export class ProductController {
     @Param('productId', ParseIntPipe) productId: number,
   ) {
     return this.productService.getProductById(productId);
+  }
+  @Get('images/:productId')
+  async retrieveOneImage(
+    @Param('productId', ParseIntPipe) productId: number,
+    @Res() res: Response,
+  ) {
+    const image = await this.productService.getImageById(productId);
+    const filePath = join(process.cwd() + '/products/' + image);
+    const stream = createReadStream(filePath);
+    return stream.pipe(res);
   }
 }
