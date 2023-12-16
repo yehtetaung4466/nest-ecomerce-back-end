@@ -13,8 +13,9 @@ import { eq } from 'drizzle-orm';
 export class ProductService {
   constructor(private readonly drizzleService: DrizzleService) {}
   async getAllProducts() {
-    const products = await this.drizzleService.db.query.products.findMany();
-    return products;
+    const productS =
+      (await this.drizzleService.db.query.products.findMany()) as (typeof products.$inferSelect)[];
+    return productS;
   }
   async getProductById(id: number) {
     const product = await this.drizzleService.db.query.products.findFirst({

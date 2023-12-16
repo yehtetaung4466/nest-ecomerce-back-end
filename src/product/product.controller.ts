@@ -6,8 +6,8 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Req,
   Res,
-  StreamableFile,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -18,7 +18,7 @@ import { ProductDto } from './dto/product.dto';
 import * as uuid from 'uuid';
 import { join } from 'path';
 import { createReadStream } from 'fs';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -47,14 +47,21 @@ export class ProductController {
     );
   }
   @Get()
-  async retrieveAllProducts() {
-    return this.productService.getAllProducts();
+  async retrieveAllProducts(@Req() req: Request) {
+    const products = await this.productService.getAllProducts();
+    products.forEach((p) => {
+      p.image = `${req.protocol}://${req.hostname}:3000/products/images/${p.id}`;
+    });
+    return products;
   }
   @Get(':productId')
   async retrieveOneProduct(
     @Param('productId', ParseIntPipe) productId: number,
+    @Req() req: Request,
   ) {
-    return this.productService.getProductById(productId);
+    const product = await this.productService.getProductById(productId);
+    product.image = `${req.protocol}://${req.hostname}:3000/products/images/${product.id}`;
+    return product;
   }
   @Get('images/:productId')
   async retrieveOneImage(
