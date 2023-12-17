@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -29,7 +30,7 @@ export class ProductController {
       storage: memoryStorage(),
     }),
   )
-  async uploadProducts(
+  uploadProducts(
     @UploadedFile() file: Express.Multer.File,
     @Body() product: ProductDto,
   ) {
@@ -39,7 +40,7 @@ export class ProductController {
     const extension = file.originalname.split('.').pop();
     const newFileName = `products_${uuid.v4()}.${extension}`;
     file.originalname = newFileName;
-    return await this.productService.makeNewProduct(
+    return this.productService.makeNewProduct(
       file,
       product.name,
       product.price,
@@ -72,5 +73,13 @@ export class ProductController {
     const filePath = join(process.cwd() + '/products/' + image);
     const stream = createReadStream(filePath);
     return stream.pipe(res);
+  }
+  @Delete(':productId')
+  deleteOneProduct(@Param('productId', ParseIntPipe) productId: number) {
+    return this.productService.deleleteProductById(productId);
+  }
+  @Delete()
+  deleteAllProducts() {
+    return this.productService.deleteAllProducts();
   }
 }

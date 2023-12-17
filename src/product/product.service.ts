@@ -63,7 +63,33 @@ export class ProductService {
       throw new InternalServerErrorException('error writing product image');
     });
   }
-
+  async deleleteProductById(id: number) {
+    const deletedProduct = await this.drizzleService.db
+      .delete(products)
+      .where(eq(products.id, id))
+      .returning();
+    if (!deletedProduct || deletedProduct.length === 0) {
+      throw new NotFoundException('product not found thus not deleted');
+    }
+    await fs
+      .rm(`${process.cwd()}/products/${deletedProduct[0].image}`)
+      .catch(() => {
+        throw new InternalServerErrorException(
+          'error while deleting product image',
+        );
+      });
+    return { msg: 'successfully deleted' };
+  }
+  async deleteAllProducts() {
+    const deletedProducts = await this.drizzleService.db.delete(products);
+    if (!deletedProducts || deletedProducts.length === 0) {
+      throw new NotFoundException('have no producs thus not deleted');
+    }
+    await fs.rm(`${process.cwd()}/products`, { recursive: true }).catch(() => {
+      throw new InternalServerErrorException('error deleting products images');
+    });
+    return { msg: 'successfully deleted all products' };
+  }
   private async handleProductImageUpload(file: Express.Multer.File) {
     await fs.mkdir(`${process.cwd()}/products`, { recursive: true });
     await fs.writeFile(

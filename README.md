@@ -19,6 +19,6 @@ This is the nest.js back-end part of the blog project.
 - post `/auth/login` obtain pair of token
 - post `/auth/refresh` to get new pair of token wiht refresh token
 - get `/users/me` to get current user
-- get,post `/products` to add new products or get all products
-- get `/products/{productId}` to get specific product
+- get,post,del `/products` to add new products or get/del all products
+- get,del `/products/{productId}` to get/del specific product
 - get `/products/images/{productId}` to see product image
