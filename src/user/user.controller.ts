@@ -9,8 +9,8 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  async getCurrentUser(@Req() req: Request) {
+  getCurrentUser(@Req() req: Request) {
     const user = req.user as ITokenPayload;
-    return await this.userService.getUserbyId(user.sub);
+    return this.userService.getUserbyId(user.sub);
   }
 }

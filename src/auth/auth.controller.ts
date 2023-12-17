@@ -57,19 +57,19 @@ export class AuthController {
   }
 
   @Post('signup')
-  async signUp(@Body() dto: SignInDto) {
-    return await this.authSerice.signUp(dto.name, dto.email, dto.password);
+  signUp(@Body() dto: SignInDto) {
+    return this.authSerice.signUp(dto.name, dto.email, dto.password);
   }
 
   @Post('login')
-  async login(@Body() dto: LogInDto) {
-    return await this.authSerice.logIn(dto.email, dto.password);
+  login(@Body() dto: LogInDto) {
+    return this.authSerice.logIn(dto.email, dto.password);
   }
   @UseGuards(JwtRefreshGuard)
   @Post('refresh')
-  async refresh(@Req() req: Request) {
+  refresh(@Req() req: Request) {
     const { sub } = req.user as ITokenPayload;
-    return await this.authSerice.jwtRefresh(sub);
+    return this.authSerice.jwtRefresh(sub);
   }
   @UseGuards(JwtAuthGuard)
   @Get('test')
