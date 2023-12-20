@@ -1,29 +1,13 @@
-import {
-  Catch,
-  ArgumentsHost,
-  ExceptionFilter,
-  HttpStatus,
-} from '@nestjs/common';
+import { Catch, ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import { PostgresError } from 'postgres';
 import { Response } from 'express';
-enum dbErrorDetail {
-  emailUnique = 'users_email_unique',
-}
 @Catch(PostgresError)
 export class DatabaseException implements ExceptionFilter {
   catch(exception: PostgresError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    let message: string = 'database error';
-    let status: number = 500;
-    function setMsgAndStatus(msg: string, sts: HttpStatus) {
-      message = msg;
-      status = sts;
-    }
-    switch (exception.constraint_name) {
-      case dbErrorDetail.emailUnique:
-        setMsgAndStatus('email already exit', HttpStatus.BAD_REQUEST);
-    }
+    const message: string = 'database error';
+    const status: number = 500;
     response.status(status).json({
       response: message,
     });

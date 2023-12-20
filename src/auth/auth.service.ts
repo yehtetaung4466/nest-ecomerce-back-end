@@ -1,7 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { DrizzleService } from 'src/drizzle/drizzle.service';
 import { tokens, users } from 'src/drizzle/schema';
-import * as bcrypt from 'bcrypt';
 import * as argon from 'argon2';
 import { eq } from 'drizzle-orm';
 import * as dayjs from 'dayjs';
@@ -15,11 +18,17 @@ export class AuthService {
   ) {}
 
   async signUp(name: string, email: string, password: string) {
-    // const hash = await bcrypt.hash(password, await bcrypt.genSalt(10));
     const hash = await argon.hash(password);
     await this.drizzleService.db
       .insert(users)
-      .values({ name, email, password: hash });
+      .values({ name, email, password: hash })
+      .catch((e) => {
+        if (e instanceof PostgresError) {
+          if (e.constraint_name === 'users_email_unique') {
+            throw new BadRequestException('email already exit');
+          }
+        }
+      });
     return { message: 'successfully signed in' };
   }
 
@@ -55,6 +64,7 @@ export class AuthService {
             })
             .where(eq(tokens.user_id, user.id));
         }
+        throw new PostgresError(err.stack);
       }
     }
     return token_s;

@@ -6,12 +6,17 @@ export class ProductDto {
   @IsString()
   name: string;
 
+  @IsNotEmpty()
+  @IsString()
+  description: string;
+
   @IsNumber()
   @IsNotEmpty()
   @Type(() => Number)
   price: number;
 
+  @IsNotEmpty()
   @IsNumber()
   @Type(() => Number)
-  rating?: number;
+  stock: number;
 }

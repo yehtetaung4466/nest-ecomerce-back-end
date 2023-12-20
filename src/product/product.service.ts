@@ -13,8 +13,7 @@ import { eq } from 'drizzle-orm';
 export class ProductService {
   constructor(private readonly drizzleService: DrizzleService) {}
   async getAllProducts() {
-    const productS =
-      (await this.drizzleService.db.query.products.findMany()) as (typeof products.$inferSelect)[];
+    const productS = await this.drizzleService.db.select().from(products);
     return productS;
   }
   async getProductById(id: number) {
@@ -38,19 +37,21 @@ export class ProductService {
   }
   async makeNewProduct(
     file: Express.Multer.File,
+    description: string,
     name: string,
     price: number,
-    rating?: number,
+    stock: number,
   ) {
     const product = await this.drizzleService.db
       .insert(products)
-      .values({ name, price, rating, image: file.originalname })
+      .values({ name, price, description, stock, image: file.originalname })
       .returning()
       .catch((err) => {
         if (err instanceof PostgresError) {
-          if (err.constraint_name === 'product_name_unique') {
+          if (err.constraint_name === 'products_name_unique') {
             throw new BadRequestException('product name already exit');
           }
+          throw new PostgresError(err.stack);
         }
       });
     if (!product) {

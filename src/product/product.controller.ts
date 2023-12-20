@@ -30,7 +30,7 @@ export class ProductController {
       storage: memoryStorage(),
     }),
   )
-  uploadProducts(
+  createNewProduct(
     @UploadedFile() file: Express.Multer.File,
     @Body() product: ProductDto,
   ) {
@@ -42,9 +42,10 @@ export class ProductController {
     file.originalname = newFileName;
     return this.productService.makeNewProduct(
       file,
+      product.description,
       product.name,
       product.price,
-      product.rating,
+      product.stock,
     );
   }
   @Get()

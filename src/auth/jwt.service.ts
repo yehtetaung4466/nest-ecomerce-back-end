@@ -96,7 +96,7 @@ export class JwtService {
     const accessToken = jwt.sign(
       payload,
       this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
-      { expiresIn: '1m' },
+      { expiresIn: '10d' },
     );
     return accessToken;
   }
@@ -107,7 +107,7 @@ export class JwtService {
       payload,
       this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
       {
-        expiresIn: '1h',
+        expiresIn: '10d',
       },
     );
     return refreshToken;
