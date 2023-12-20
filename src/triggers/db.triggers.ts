@@ -1,9 +1,9 @@
 import { sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import * as postgres from 'postgres';
 import { exit } from 'process';
-import * as schema from 'src/drizzle/schema';
-import dotenv from 'dotenv';
+import * as schema from '../drizzle/schema';
+import * as dotenv from 'dotenv';
 dotenv.config();
 const connection = postgres(process.env.DB_URL);
 console.log('connection complete');

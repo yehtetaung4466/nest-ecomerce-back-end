@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "db:prepare": "drizzle-kit push:pg && bun ./src/triggers/db.triggers.ts",
+    "db:prepare": "drizzle-kit push:pg && ts-node ./src/triggers/db.triggers.ts",
     "generate": "drizzle-kit generate:pg",
     "push": "drizzle-kit push:pg",
     "studio": "drizzle-kit studio",
@@ -50,7 +50,8 @@
     "postgres": "^3.4.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -77,7 +78,6 @@
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
-    "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
   },

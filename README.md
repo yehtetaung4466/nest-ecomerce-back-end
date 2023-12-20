@@ -10,7 +10,7 @@ This is the nest.js back-end part of the blog project.
    - DB_URL
    - JWT_REFRESH_TOKEN_SECRET
    - JWT_ACCESS_TOKEN_SECRET
-  - run `pnpm push` to load the postgresql
+  - run `pnpm db:prepare` to prepare the postgresql
   - run `pnpm start:dev`
   - optionally run `pnpm studio` to access drizzle-kit studio
 
