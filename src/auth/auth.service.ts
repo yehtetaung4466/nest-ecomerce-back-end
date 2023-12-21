@@ -28,6 +28,7 @@ export class AuthService {
             throw new BadRequestException('email already exit');
           }
         }
+        console.log(e);
       });
     return { message: 'successfully signed in' };
   }
