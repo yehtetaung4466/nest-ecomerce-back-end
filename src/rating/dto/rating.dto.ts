@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsString, Max, Min } from 'class-validator';
 
-export class RationDto {
+export class UpdateRatingDto {
   @IsNotEmpty()
   @IsString()
   opinion: string;
@@ -11,6 +11,9 @@ export class RationDto {
   @Max(5.0)
   @Min(0.0)
   rating: number;
+}
+
+export class RatingDto extends UpdateRatingDto {
   @IsNotEmpty()
   @IsNumber()
   @Type(() => Number)

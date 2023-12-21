@@ -31,6 +31,23 @@ AFTER INSERT ON orders
 FOR EACH ROW
 EXECUTE FUNCTION update_stock();
 `);
+  await db.execute(sql`
+CREATE OR REPLACE FUNCTION update_rating()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE products
+  SET rating = (SELECT AVG(rating) FROM ratings WHERE item_id = NEW.item_id)
+  WHERE id = NEW.item_id;
+  RETURN NEW;
+END;
+$$
+ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER update_stock_trigger
+AFTER INSERT OR UPDATE ON ratings
+FOR EACH ROW
+EXECUTE FUNCTION update_rating();
+`);
   connection.end();
   console.log('prepared db successfully');
   exit();

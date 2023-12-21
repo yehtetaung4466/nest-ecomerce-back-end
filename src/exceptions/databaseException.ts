@@ -8,6 +8,7 @@ export class DatabaseException implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const message: string = 'database error';
     const status: number = 500;
+    console.log(exception);
     response.status(status).json({
       response: exception.stack || message,
     });

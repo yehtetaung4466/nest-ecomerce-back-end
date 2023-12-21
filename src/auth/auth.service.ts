@@ -28,7 +28,6 @@ export class AuthService {
             throw new BadRequestException('email already exit');
           }
         }
-        console.log(e);
       });
     return { message: 'successfully signed in' };
   }
@@ -41,7 +40,6 @@ export class AuthService {
         password: true,
       },
     });
-
     if (!user) {
       throw new UnauthorizedException('invalid credentials');
     }
@@ -49,25 +47,14 @@ export class AuthService {
     if (!isMatch) {
       throw new UnauthorizedException('invalid credentials');
     }
+    await this.drizzleService.db
+      .delete(tokens)
+      .where(eq(tokens.user_id, user.id));
+
     const token_s = this.jwtService.generateTokens(user.id);
-    try {
-      await this.drizzleService.db
-        .insert(tokens)
-        .values({ refresh_token: token_s.refreshToken, user_id: user.id });
-    } catch (err) {
-      if (err instanceof PostgresError) {
-        if (err.constraint_name === 'token_user_id_unique') {
-          await this.drizzleService.db
-            .update(tokens)
-            .set({
-              refresh_token: token_s.refreshToken,
-              updatedAt: dayjs(Date.now()).toISOString(),
-            })
-            .where(eq(tokens.user_id, user.id));
-        }
-        throw new PostgresError(err.stack);
-      }
-    }
+    await this.drizzleService.db
+      .insert(tokens)
+      .values({ refresh_token: token_s.refreshToken, user_id: user.id });
     return token_s;
   }
   async jwtRefresh(sub: number) {
