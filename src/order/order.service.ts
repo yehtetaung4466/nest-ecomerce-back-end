@@ -23,8 +23,8 @@ export class OrderService {
           if (err.message === 'Insufficient stock') {
             throw new BadRequestException('Insufficient stock');
           }
-          throw new PostgresError(err.stack);
         }
+        throw new PostgresError(err);
       });
     return { msg: 'successfully created a new order' };
   }
