@@ -6,6 +6,7 @@ import {
   real,
   serial,
   text,
+  unique,
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
@@ -51,10 +52,33 @@ export const orders = pgTable('orders', {
   createdAt: date('createAt').defaultNow().notNull(),
   updatedAt: date('updatedAt').defaultNow().notNull(),
 });
+export const ratings = pgTable(
+  'ratings',
+  {
+    id: serial('id').primaryKey(),
+    customer_id: serial('customer_id')
+      .notNull()
+      .references(() => users.id),
+    item_id: serial('item_id')
+      .notNull()
+      .references(() => products.id),
+    rating: real('rating').notNull(),
+    opinion: text('opinion'),
+    createdAt: date('createAt').defaultNow().notNull(),
+    updatedAt: date('updatedAt').defaultNow().notNull(),
+  },
+  (t) => ({
+    customerUniqueProduct: unique('customerUniqueProduct').on(
+      t.customer_id,
+      t.item_id,
+    ),
+  }),
+);
 
 export const userRelation = relations(users, ({ many }) => ({
   token: many(tokens),
   order: many(orders),
+  rationg: many(ratings),
 }));
 
 export const tokenRelation = relations(tokens, ({ one }) => ({
@@ -65,6 +89,7 @@ export const tokenRelation = relations(tokens, ({ one }) => ({
 }));
 export const productRelation = relations(products, ({ many }) => ({
   order: many(orders),
+  rating: many(ratings),
 }));
 
 export const orderRelation = relations(orders, ({ one }) => ({
@@ -74,6 +99,17 @@ export const orderRelation = relations(orders, ({ one }) => ({
   }),
   item: one(products, {
     fields: [orders.customer_id],
+    references: [products.id],
+  }),
+}));
+
+export const ratingRelation = relations(ratings, ({ one }) => ({
+  customer: one(users, {
+    fields: [ratings.customer_id],
+    references: [users.id],
+  }),
+  item: one(products, {
+    fields: [ratings.customer_id],
     references: [products.id],
   }),
 }));

@@ -7,6 +7,7 @@ import { DrizzleModule } from './drizzle/drizzle.module';
 import { UserModule } from './user/user.module';
 import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
+import { RatingModule } from './rating/rating.module';
 @Module({
   imports: [
     AuthModule,
@@ -15,6 +16,7 @@ import { OrderModule } from './order/order.module';
     UserModule,
     ProductModule,
     OrderModule,
+    RatingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

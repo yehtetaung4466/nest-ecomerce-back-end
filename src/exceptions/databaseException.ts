@@ -9,7 +9,7 @@ export class DatabaseException implements ExceptionFilter {
     const message: string = 'database error';
     const status: number = 500;
     response.status(status).json({
-      response: message,
+      response: exception || message,
     });
     // Handle the specific database error here
     // You can customize the response based on the database error
