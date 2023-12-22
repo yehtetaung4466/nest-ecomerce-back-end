@@ -44,7 +44,7 @@ $$
  LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER update_stock_trigger
-AFTER INSERT OR UPDATE ON ratings
+AFTER INSERT OR DELETE OR UPDATE ON ratings
 FOR EACH ROW
 EXECUTE FUNCTION update_rating();
 `);

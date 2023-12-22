@@ -1,6 +1,6 @@
 ## Ecomerce app back-end
 
-This is the nest.js back-end part of the blog project.
+This is the nest.js back-end part of an e-comerece project.
 
 ### To start the project
 - clone the project
@@ -17,7 +17,7 @@ This is the nest.js back-end part of the blog project.
 #### Apis
 - post `/auth/signup`
 - post `/auth/login` obtain pair of token
-- post `/auth/refresh` to get new pair of token wiht refresh token
+- post `/auth/refresh` to get a new pair of token wiht refresh token
 - get `/users/me` to get current user
 - get,post,del `/products` to add new products or get/del all products
 - get,del `/products/{productId}` to get/del specific product
