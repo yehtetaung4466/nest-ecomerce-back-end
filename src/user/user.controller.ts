@@ -9,7 +9,7 @@ import {
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { Request } from 'express';
-import { ITokenPayload } from 'src/utils/interfaces';
+import { TokenPayload } from 'src/utils/interfaces';
 import { OrderService } from 'src/order/order.service';
 import { CheckUserExitGuard } from 'src/guards/checkUserExit.guard';
 
@@ -22,13 +22,13 @@ export class UserController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   getCurrentUser(@Req() req: Request) {
-    const user = req.user as ITokenPayload;
+    const user = req.user as TokenPayload;
     return this.userService.getUserbyId(user.sub);
   }
   @Get('me/orders')
   @UseGuards(JwtAuthGuard)
   getOrdersOfCurrentUser(@Req() req: Request) {
-    const user = req.user as ITokenPayload;
+    const user = req.user as TokenPayload;
     return this.orderService.getOrdersByUserId(user.sub);
   }
   @UseGuards(CheckUserExitGuard)

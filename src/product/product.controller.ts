@@ -62,7 +62,7 @@ export class ProductController {
     @Req() req: Request,
   ) {
     const product = await this.productService.getProductById(productId);
-    product.image = `${req.protocol}://${req.hostname}:3000/products/images/${product.id}`;
+    product.image = `${req.baseUrl}/products/images/${product.id}`;
     return product;
   }
   @Get('images/:productId')

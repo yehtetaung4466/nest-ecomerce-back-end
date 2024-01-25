@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { DrizzleService } from 'src/drizzle/drizzle.service';
-import { tokens, users } from 'src/drizzle/schema';
+import { users } from 'src/drizzle/schema';
 import * as argon from 'argon2';
 import { eq } from 'drizzle-orm';
 import * as dayjs from 'dayjs';
@@ -47,37 +47,18 @@ export class AuthService {
     if (!isMatch) {
       throw new UnauthorizedException('invalid credentials');
     }
-    await this.drizzleService.db
-      .delete(tokens)
-      .where(eq(tokens.user_id, user.id));
-
     const token_s = this.jwtService.generateTokens(user.id);
-    await this.drizzleService.db
-      .insert(tokens)
-      .values({ refresh_token: token_s.refreshToken, user_id: user.id });
     return token_s;
   }
-  async jwtRefresh(sub: number) {
-    const token_s = this.jwtService.generateTokens(sub);
-    await this.drizzleService.db
-      .update(tokens)
-      .set({ refresh_token: token_s.refreshToken })
-      .where(eq(tokens.user_id, sub));
-    return token_s;
-  }
-  async checkIfRefreshTokenMet(sub: number, refreshToken: string) {
-    const { refresh_token: db_refreshToken } =
-      await this.drizzleService.db.query.tokens.findFirst({
-        where: eq(tokens.user_id, sub),
-        columns: {
-          refresh_token: true,
-        },
-      });
-    if (!db_refreshToken) {
-      throw new UnauthorizedException('invalid token');
-    }
-    const isMatch = refreshToken === db_refreshToken;
-    return isMatch;
+  async jwtRefresh(sub: number, expOfRefreshToken: number) {
+    const currentTime = Date.now() / 1000;
+    const diff = expOfRefreshToken - currentTime;
+    const tokens = this.jwtService.generateTokens(sub);
+    const twoDays = 2 * 60 * 60 * 24;
+    return diff < twoDays
+      ? { msg: 'refresh token is expiring soon thus issued a new one', tokens }
+      : { accessToken: tokens.accessToken };
   }
 }
+
 //

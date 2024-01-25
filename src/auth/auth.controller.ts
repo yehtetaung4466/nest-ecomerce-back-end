@@ -4,7 +4,7 @@ import { LogInDto, SignInDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { JwtRefreshGuard } from 'src/guards/jwtRefresh.guard';
-import { ITokenPayload } from 'src/utils/interfaces';
+import { TokenPayload } from 'src/utils/interfaces';
 
 @Controller('auth')
 export class AuthController {
@@ -21,8 +21,8 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Post('refresh')
   refresh(@Req() req: Request) {
-    const { sub } = req.user as ITokenPayload;
-    return this.authSerice.jwtRefresh(sub);
+    const { sub, exp } = req.user as TokenPayload;
+    return this.authSerice.jwtRefresh(sub, exp);
   }
   @UseGuards(JwtAuthGuard)
   @Get('test')

@@ -11,7 +11,7 @@ import {
 import { RatingService } from './rating.service';
 import { RatingDto, UpdateRatingDto } from './dto/rating.dto';
 import { Request } from 'express';
-import { ITokenPayload } from 'src/utils/interfaces';
+import { TokenPayload } from 'src/utils/interfaces';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 
 @Controller('ratings')
@@ -20,7 +20,7 @@ export class RatingController {
   @UseGuards(JwtAuthGuard)
   @Post()
   createNewRating(@Body() dto: RatingDto, @Req() req: Request) {
-    const user = req.user as ITokenPayload;
+    const user = req.user as TokenPayload;
     return this.ratingService.makeNewRating(
       dto.rating,
       dto.opinion,
@@ -35,7 +35,7 @@ export class RatingController {
     @Param('ratingId', ParseIntPipe) ratingId: number,
     @Body() dto: UpdateRatingDto,
   ) {
-    const user = req.user as ITokenPayload;
+    const user = req.user as TokenPayload;
     return this.ratingService.changeRatingById(
       ratingId,
       user.sub,

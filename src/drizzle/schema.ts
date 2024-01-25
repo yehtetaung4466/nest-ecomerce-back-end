@@ -20,16 +20,16 @@ export const users = pgTable('users', {
   updatedAt: date('updatedAt').defaultNow().notNull(),
 });
 
-export const tokens = pgTable('tokens', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  user_id: serial('user_id')
-    .references(() => users.id)
-    .unique(),
-  refresh_token: text('refresh_token'),
-  expiresAt: date('expiresAt'),
-  createdAt: date('createAt').defaultNow().notNull(),
-  updatedAt: date('updatedAt').defaultNow().notNull(),
-});
+// export const tokens = pgTable('tokens', {
+//   id: uuid('id').primaryKey().defaultRandom(),
+//   user_id: serial('user_id')
+//     .references(() => users.id)
+//     .unique(),
+//   refresh_token: text('refresh_token'),
+//   expiresAt: date('expiresAt'),
+//   createdAt: date('createAt').defaultNow().notNull(),
+//   updatedAt: date('updatedAt').defaultNow().notNull(),
+// });
 
 export const products = pgTable('products', {
   id: serial('id').primaryKey(),
@@ -76,17 +76,16 @@ export const ratings = pgTable(
 );
 
 export const userRelation = relations(users, ({ many }) => ({
-  token: many(tokens),
   order: many(orders),
   rationg: many(ratings),
 }));
 
-export const tokenRelation = relations(tokens, ({ one }) => ({
-  user: one(users, {
-    fields: [tokens.user_id],
-    references: [users.id],
-  }),
-}));
+// export const tokenRelation = relations(tokens, ({ one }) => ({
+//   user: one(users, {
+//     fields: [tokens.user_id],
+//     references: [users.id],
+//   }),
+// }));
 export const productRelation = relations(products, ({ many }) => ({
   order: many(orders),
   rating: many(ratings),
