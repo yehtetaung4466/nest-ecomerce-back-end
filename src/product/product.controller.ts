@@ -35,7 +35,7 @@ export class ProductController {
     @Body() product: ProductDto,
   ) {
     if (!file) {
-      throw new BadRequestException('product image is expected');
+      throw new BadRequestException('image is required');
     }
     const extension = file.originalname.split('.').pop();
     const newFileName = `products_${uuid.v4()}.${extension}`;
