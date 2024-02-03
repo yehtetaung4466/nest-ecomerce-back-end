@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Req,
   Res,
@@ -15,7 +16,7 @@ import {
 import { ProductService } from './product.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { ProductDto } from './dto/product.dto';
+import { PriceChnDto, ProductDto, StockChnDto } from './dto/product.dto';
 import * as uuid from 'uuid';
 import { join } from 'path';
 import { createReadStream } from 'fs';
@@ -52,7 +53,7 @@ export class ProductController {
   async retrieveAllProducts(@Req() req: Request) {
     const products = await this.productService.getAllProducts();
     products.forEach((p) => {
-      p.image = `${req.protocol}://${req.hostname}:3000/products/images/${p.id}`;
+      p.image = `${req.baseUrl}/products/images/${p.id}`;
     });
     return products;
   }
@@ -82,5 +83,19 @@ export class ProductController {
   @Delete()
   deleteAllProducts() {
     return this.productService.deleteAllProducts();
+  }
+  @Patch(':productId/stock')
+  changeStock(
+    @Param('productId', ParseIntPipe) productId: number,
+    @Body() dto: StockChnDto,
+  ) {
+    return this.productService.changeStockOfProductById(productId, dto.stock);
+  }
+  @Patch(':productId/price')
+  changePrice(
+    @Param('productId', ParseIntPipe) productId: number,
+    @Body() dto: PriceChnDto,
+  ) {
+    return this.productService.changePriceOfProductById(productId, dto.price);
   }
 }

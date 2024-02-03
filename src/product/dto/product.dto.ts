@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
 
 export class ProductDto {
   @IsNotEmpty()
@@ -19,4 +19,19 @@ export class ProductDto {
   @IsNumber()
   @Type(() => Number)
   stock: number;
+}
+
+export class StockChnDto {
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  stock: number;
+}
+export class PriceChnDto {
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  price: number;
 }

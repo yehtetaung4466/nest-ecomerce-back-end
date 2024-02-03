@@ -19,18 +19,6 @@ export const users = pgTable('users', {
   createdAt: date('createAt').defaultNow().notNull(),
   updatedAt: date('updatedAt').defaultNow().notNull(),
 });
-
-// export const tokens = pgTable('tokens', {
-//   id: uuid('id').primaryKey().defaultRandom(),
-//   user_id: serial('user_id')
-//     .references(() => users.id)
-//     .unique(),
-//   refresh_token: text('refresh_token'),
-//   expiresAt: date('expiresAt'),
-//   createdAt: date('createAt').defaultNow().notNull(),
-//   updatedAt: date('updatedAt').defaultNow().notNull(),
-// });
-
 export const products = pgTable('products', {
   id: serial('id').primaryKey(),
   description: text('description').notNull(),
@@ -77,7 +65,7 @@ export const ratings = pgTable(
 
 export const userRelation = relations(users, ({ many }) => ({
   order: many(orders),
-  rationg: many(ratings),
+  rating: many(ratings),
 }));
 
 // export const tokenRelation = relations(tokens, ({ one }) => ({

@@ -22,6 +22,8 @@ This is the nest.js back-end part of an e-comerece project.
 - get,post,del `/products` to add new products or get/del all products
 - get,del `/products/{productId}` to get/del specific product
 - get `/products/images/{productId}` to see product image
+- patch `/products/{productId}/stock` to change stock 
+- patch `/products/{productId}/price` to change price 
 - post `/orders` to make orders
 - get `/orders/:orderId` to get specific order 
 - get `/users/me/orders` to get current user's orders

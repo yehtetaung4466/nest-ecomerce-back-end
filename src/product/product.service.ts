@@ -99,4 +99,22 @@ export class ProductService {
     );
     return { msg: 'success' };
   }
+  async changeStockOfProductById(id: number, newStock: number) {
+    const updated = await this.drizzleService.db
+      .update(products)
+      .set({ stock: newStock })
+      .where(eq(products.id, id))
+      .returning();
+    if (updated.length === 0) throw new NotFoundException('product not found');
+    return { msg: 'successfully updated the stock' };
+  }
+  async changePriceOfProductById(id: number, newPrice: number) {
+    const updated = await this.drizzleService.db
+      .update(products)
+      .set({ price: newPrice })
+      .where(eq(products.id, id))
+      .returning();
+    if (updated.length === 0) throw new NotFoundException('product not found');
+    return { msg: 'successfully updated the price' };
+  }
 }
