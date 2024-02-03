@@ -36,12 +36,7 @@ export class RatingService {
       });
     return { msg: 'successfully created a new rating' };
   }
-  async changeRatingById(
-    id: number,
-    userId: number,
-    newRating: number,
-    newOpinion: string,
-  ) {
+  async changeRatingById(id: number, userId: number, newRating: number) {
     const oldRating = await this.drizzleService.db.query.ratings.findFirst({
       where: eq(ratings.id, id),
     });
@@ -55,10 +50,28 @@ export class RatingService {
       .update(ratings)
       .set({
         rating: newRating,
-        opinion: newOpinion,
         updatedAt: dayjs(Date.now()).toISOString(),
       })
       .where(eq(ratings.id, id));
     return { msg: 'successfully updated rating' };
+  }
+  async changeOpinionById(id: number, userId: number, newOpinion: string) {
+    const oldRating = await this.drizzleService.db.query.ratings.findFirst({
+      where: eq(ratings.id, id),
+    });
+    if (!oldRating) {
+      throw new NotFoundException('opinion does not exit');
+    }
+    if (userId !== oldRating.customer_id) {
+      throw new UnauthorizedException('you are not authorized for this action');
+    }
+    await this.drizzleService.db
+      .update(ratings)
+      .set({
+        opinion: newOpinion,
+        updatedAt: dayjs(Date.now()).toISOString(),
+      })
+      .where(eq(ratings.id, id));
+    return { msg: 'successfully updated opinion' };
   }
 }

@@ -3,13 +3,14 @@ import {
   Controller,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { RatingService } from './rating.service';
-import { RatingDto, UpdateRatingDto } from './dto/rating.dto';
+import { RatingDto, UpdateRatingDto, updateOpinionDto } from './dto/rating.dto';
 import { Request } from 'express';
 import { TokenPayload } from 'src/utils/interfaces';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
@@ -29,17 +30,26 @@ export class RatingController {
     );
   }
   @UseGuards(JwtAuthGuard)
-  @Put(':ratingId')
+  @Patch(':ratingId')
   updateRating(
     @Req() req: Request,
     @Param('ratingId', ParseIntPipe) ratingId: number,
     @Body() dto: UpdateRatingDto,
   ) {
     const user = req.user as TokenPayload;
-    return this.ratingService.changeRatingById(
+    return this.ratingService.changeRatingById(ratingId, user.sub, dto.rating);
+  }
+  @UseGuards(JwtAuthGuard)
+  @Patch(':ratingId/opinion')
+  updateOpinion(
+    @Req() req: Request,
+    @Param('ratingId', ParseIntPipe) ratingId: number,
+    @Body() dto: updateOpinionDto,
+  ) {
+    const user = req.user as TokenPayload;
+    return this.ratingService.changeOpinionById(
       ratingId,
       user.sub,
-      dto.rating,
       dto.opinion,
     );
   }
