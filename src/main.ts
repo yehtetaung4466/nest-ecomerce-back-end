@@ -5,9 +5,10 @@ import { GeneralHttpException } from './exceptions/generalHttpException';
 import { ValidationPipe } from '@nestjs/common';
 import { DatabaseException } from './exceptions/databaseException';
 import { GeneralErrorException } from './exceptions/generalErrorException';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.use(cookieParser());
   app.enableCors();
   app.useGlobalFilters(

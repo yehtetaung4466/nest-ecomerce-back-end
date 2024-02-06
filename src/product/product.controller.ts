@@ -21,9 +21,13 @@ import * as uuid from 'uuid';
 import { join } from 'path';
 import { createReadStream } from 'fs';
 import { Request, Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 @Controller('products')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Post()
   @UseInterceptors(
@@ -37,6 +41,11 @@ export class ProductController {
   ) {
     if (!file) {
       throw new BadRequestException('image is required');
+    }
+    if (!file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/)) {
+      throw new BadRequestException(
+        'image must be format of jpg|webp|png|jpeg',
+      );
     }
     const extension = file.originalname.split('.').pop();
     const newFileName = `products_${uuid.v4()}.${extension}`;
@@ -52,8 +61,9 @@ export class ProductController {
   @Get()
   async retrieveAllProducts(@Req() req: Request) {
     const products = await this.productService.getAllProducts();
+    const port = this.configService.get('PORT') as string | undefined;
     products.forEach((p) => {
-      p.image = `${req.baseUrl}/products/images/${p.id}`;
+      p.image = `${req.protocol}://${req.hostname}${port ? `:${port}` : ''}/products/images/${p.id}`;
     });
     return products;
   }
@@ -63,7 +73,8 @@ export class ProductController {
     @Req() req: Request,
   ) {
     const product = await this.productService.getProductById(productId);
-    product.image = `${req.baseUrl}/products/images/${product.id}`;
+    const port = this.configService.get('PORT') as string | undefined;
+    product.image = `${req.protocol}://${req.hostname}${port ? `:${port}` : ''}/products/images/${product.id}`;
     return product;
   }
   @Get('images/:productId')
@@ -97,5 +108,29 @@ export class ProductController {
     @Body() dto: PriceChnDto,
   ) {
     return this.productService.changePriceOfProductById(productId, dto.price);
+  }
+  @Patch(':productId/image')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: memoryStorage(),
+    }),
+  )
+  changeImage(
+    @UploadedFile()
+    file: Express.Multer.File,
+    @Param('productId', ParseIntPipe) productId: number,
+  ) {
+    if (!file) {
+      throw new BadRequestException('image is required');
+    }
+    if (!file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/)) {
+      throw new BadRequestException(
+        'image must be format of jpg|webp|png|jpeg',
+      );
+    }
+    const extension = file.originalname.split('.').pop();
+    const newFileName = `products_${uuid.v4()}.${extension}`;
+    file.originalname = newFileName;
+    return this.productService.changeImageofProductById(productId, file);
   }
 }

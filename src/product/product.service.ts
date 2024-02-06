@@ -99,6 +99,9 @@ export class ProductService {
     );
     return { msg: 'success' };
   }
+  private async handleProductImageDelete(image: string) {
+    await fs.rm(`${process.cwd()}/products/${image}`);
+  }
   async changeStockOfProductById(id: number, newStock: number) {
     const updated = await this.drizzleService.db
       .update(products)
@@ -116,5 +119,17 @@ export class ProductService {
       .returning();
     if (updated.length === 0) throw new NotFoundException('product not found');
     return { msg: 'successfully updated the price' };
+  }
+  async changeImageofProductById(id: number, newImage: Express.Multer.File) {
+    const oldProduct = await this.drizzleService.db.query.products.findFirst({
+      where: eq(products.id, id),
+    });
+    if (!oldProduct) throw new NotFoundException('product not found');
+    await this.handleProductImageDelete(oldProduct.image);
+    await this.handleProductImageUpload(newImage);
+    await this.drizzleService.db
+      .update(products)
+      .set({ image: newImage.originalname });
+    return { msg: 'successfully updated image' };
   }
 }
