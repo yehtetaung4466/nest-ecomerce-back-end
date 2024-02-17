@@ -37,6 +37,9 @@ export const orders = pgTable('orders', {
     .notNull()
     .references(() => products.id),
   quantity: integer('quantity').notNull(),
+  group_id: uuid('group_id')
+    .notNull()
+    .references(() => orderComments.group_id),
   createdAt: date('createAt').defaultNow().notNull(),
   updatedAt: date('updatedAt').defaultNow().notNull(),
 });
@@ -62,6 +65,13 @@ export const ratings = pgTable(
     ),
   }),
 );
+export const orderComments = pgTable('order_comments', {
+  id: serial('id').primaryKey(),
+  comment: text('comment').notNull(),
+  createdAt: date('createAt').defaultNow().notNull(),
+  updatedAt: date('updatedAt').defaultNow().notNull(),
+  group_id: uuid('group_id').notNull().unique(),
+});
 
 export const userRelation = relations(users, ({ many }) => ({
   order: many(orders),
@@ -85,9 +95,16 @@ export const orderRelation = relations(orders, ({ one }) => ({
     references: [users.id],
   }),
   item: one(products, {
-    fields: [orders.customer_id],
+    fields: [orders.item_id],
     references: [products.id],
   }),
+  order_comment: one(orderComments, {
+    fields: [orders.group_id],
+    references: [orderComments.group_id],
+  }),
+}));
+export const orderCommentRelation = relations(orderComments, ({ many }) => ({
+  orders: many(orders),
 }));
 
 export const ratingRelation = relations(ratings, ({ one }) => ({

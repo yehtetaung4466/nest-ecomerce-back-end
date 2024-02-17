@@ -21,7 +21,12 @@ export class OrderController {
   @UseGuards(JwtAuthGuard)
   makeNewOrder(@Body() dto: OrderDto, @Req() req: Request) {
     const user = req.user as TokenPayload;
-    return this.orderService.createNewOrder(user.sub, dto.itemId, dto.quantity);
+    return this.orderService.createNewOrder(
+      user.sub,
+      dto.orderGroupId,
+      dto.comment,
+      dto.orders,
+    );
   }
   @Get(':orderId')
   getOneOrder(@Param('orderId', ParseIntPipe) orderId: number) {
