@@ -104,7 +104,6 @@ export class OrderService {
       comment: string;
       orders: OrderWithoutGroupId[];
       total: number;
-      customer: { id: number; name: string };
     }[] = [];
     orderS.forEach((o) => {
       const index = res.findIndex((res) => res.orderGroupId === o.group_id);
@@ -120,7 +119,6 @@ export class OrderService {
         res[index].orders.push(noCommentAndGroupIdObj);
       } else {
         res.push({
-          customer: user,
           orderGroupId: o.group_id,
           comment: o.order_comment.comment,
           orders: [],
@@ -137,7 +135,7 @@ export class OrderService {
         res[res.length - 1].total += item.price;
       }
     });
-    return res;
+    return { user, orderObjArray: res };
   }
   async getOrderById(orderId: number) {
     const orderS = await this.drizzleService.db.query.orders.findFirst({
