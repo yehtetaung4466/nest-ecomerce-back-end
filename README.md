@@ -32,3 +32,4 @@ This is the nest.js back-end part of an e-comerece project.
 - post `/ratings` to make new rating
 - patch `/ratings/:ratingId` to update rating
 - patch `/ratings/:ratingId/opinion` to update rating's opinion
+- post,get `/categories` to get/create a category
