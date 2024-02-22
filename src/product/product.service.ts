@@ -9,6 +9,7 @@ import { products } from 'src/drizzle/schema';
 import * as fs from 'node:fs/promises';
 import { PostgresError } from 'postgres';
 import { eq } from 'drizzle-orm';
+
 @Injectable()
 export class ProductService {
   constructor(private readonly drizzleService: DrizzleService) {}
@@ -41,10 +42,18 @@ export class ProductService {
     name: string,
     price: number,
     stock: number,
+    categoryId: number,
   ) {
     const product = await this.drizzleService.db
       .insert(products)
-      .values({ name, price, description, stock, image: file.originalname })
+      .values({
+        name,
+        price,
+        description,
+        stock,
+        image: file.originalname,
+        category_id: categoryId,
+      })
       .returning()
       .catch((err) => {
         if (err instanceof PostgresError) {

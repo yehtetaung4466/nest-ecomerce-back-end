@@ -22,11 +22,13 @@ import { join } from 'path';
 import { createReadStream } from 'fs';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { CategoriesService } from 'src/categories/categories.service';
 @Controller('products')
 export class ProductController {
   constructor(
     private readonly productService: ProductService,
     private readonly configService: ConfigService,
+    private readonly categoriesService: CategoriesService,
   ) {}
 
   @Post()
@@ -35,7 +37,7 @@ export class ProductController {
       storage: memoryStorage(),
     }),
   )
-  createNewProduct(
+  async createNewProduct(
     @UploadedFile() file: Express.Multer.File,
     @Body() product: ProductDto,
   ) {
@@ -47,6 +49,12 @@ export class ProductController {
         'image must be format of jpg|webp|png|jpeg',
       );
     }
+    const categoryExit = await this.categoriesService.checkIfCategoryExit(
+      product.categoryId,
+    );
+    if (!categoryExit) {
+      throw new BadRequestException('category does not exit');
+    }
     const extension = file.originalname.split('.').pop();
     const newFileName = `products_${uuid.v4()}.${extension}`;
     file.originalname = newFileName;
@@ -56,6 +64,7 @@ export class ProductController {
       product.name,
       product.price,
       product.stock,
+      product.categoryId,
     );
   }
   @Get()

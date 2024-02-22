@@ -19,6 +19,11 @@ export class ProductDto {
   @IsNumber()
   @Type(() => Number)
   stock: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Type(() => Number)
+  categoryId: number;
 }
 
 export class StockChnDto {

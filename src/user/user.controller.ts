@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Req,
@@ -11,7 +12,6 @@ import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { Request } from 'express';
 import { TokenPayload } from 'src/utils/interfaces';
 import { OrderService } from 'src/order/order.service';
-import { CheckUserExitGuard } from 'src/guards/checkUserExit.guard';
 
 @Controller('users')
 export class UserController {
@@ -31,9 +31,10 @@ export class UserController {
     const user = req.user as TokenPayload;
     return this.orderService.getOrdersByUserId(user.sub);
   }
-  @UseGuards(CheckUserExitGuard)
   @Get(':userId/orders')
-  getOrdersOfSpecificUser(@Param('userId', ParseIntPipe) userId: number) {
+  async getOrdersOfSpecificUser(@Param('userId', ParseIntPipe) userId: number) {
+    const userExit = await this.userService.userExit(userId);
+    if (!userExit) throw new NotFoundException('user not found');
     return this.orderService.getOrdersByUserId(userId);
   }
 }

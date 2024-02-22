@@ -17,4 +17,8 @@ export class UserService {
     });
     return user;
   }
+  async userExit(id: number) {
+    const userExit = !!(await this.getUserbyId(id));
+    return userExit;
+  }
 }

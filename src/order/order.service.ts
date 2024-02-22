@@ -4,6 +4,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { PostgresError } from 'postgres';
@@ -25,9 +26,10 @@ export class OrderService {
     order_s: Order[],
   ) {
     const deniedOrders: Denied_Order[] = [];
-    await this.drizzleService.db
+    const orderComment = await this.drizzleService.db
       .insert(orderComments)
       .values({ comment, group_id: orderGroupId })
+      .returning()
       .catch((err: any) => {
         handleDbError(
           checkIfPostgresError(err).constraint_name ===
@@ -48,6 +50,17 @@ export class OrderService {
           group_id: orderGroupId,
         });
       } catch (err) {
+        handleDbError(
+          checkIfPostgresError(err).constraint_name ===
+            'orders_customer_id_users_id_fk',
+          err,
+          async () => {
+            await this.drizzleService.db
+              .delete(orderComments)
+              .where(eq(orderComments.id, orderComment[0].id));
+            throw new UnauthorizedException('unauthorized');
+          },
+        );
         handleDbError(
           checkIfPostgresError(err).message === 'Insufficient stock',
           err,
@@ -99,6 +112,7 @@ export class OrderService {
         name: true,
       },
     });
+    if (!user) throw new NotFoundException('user not found');
     const res: {
       orderGroupId: string;
       comment: string;

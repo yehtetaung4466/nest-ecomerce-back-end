@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
 import { RatingModule } from './rating/rating.module';
+import { CategoriesModule } from './categories/categories.module';
 @Module({
   imports: [
     AuthModule,
@@ -17,6 +18,7 @@ import { RatingModule } from './rating/rating.module';
     ProductModule,
     OrderModule,
     RatingModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
