@@ -21,8 +21,8 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Post('refresh')
   refresh(@Req() req: Request) {
-    const { sub, exp } = req.user as TokenPayload;
-    return this.authSerice.jwtRefresh(sub, exp);
+    const { sub, exp, role } = req.user as TokenPayload;
+    return this.authSerice.jwtRefresh(sub, exp, role);
   }
   @UseGuards(JwtAuthGuard)
   @Get('test')

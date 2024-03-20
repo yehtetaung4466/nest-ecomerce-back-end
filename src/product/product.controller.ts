@@ -11,6 +11,7 @@ import {
   Req,
   Res,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
@@ -23,6 +24,7 @@ import { createReadStream } from 'fs';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { CategoriesService } from 'src/categories/categories.service';
+import { JwtAdminGuard } from 'src/guards/jwt.admin.guard';
 @Controller('products')
 export class ProductController {
   constructor(
@@ -30,7 +32,7 @@ export class ProductController {
     private readonly configService: ConfigService,
     private readonly categoriesService: CategoriesService,
   ) {}
-
+  @UseGuards(JwtAdminGuard)
   @Post()
   @UseInterceptors(
     FileInterceptor('image', {
@@ -96,14 +98,17 @@ export class ProductController {
     const stream = createReadStream(filePath);
     return stream.pipe(res);
   }
+  @UseGuards(JwtAdminGuard)
   @Delete(':productId')
   deleteOneProduct(@Param('productId', ParseIntPipe) productId: number) {
     return this.productService.deleleteProductById(productId);
   }
+  @UseGuards(JwtAdminGuard)
   @Delete()
   deleteAllProducts() {
     return this.productService.deleteAllProducts();
   }
+  @UseGuards(JwtAdminGuard)
   @Patch(':productId/stock')
   changeStock(
     @Param('productId', ParseIntPipe) productId: number,
@@ -111,6 +116,7 @@ export class ProductController {
   ) {
     return this.productService.changeStockOfProductById(productId, dto.stock);
   }
+  @UseGuards(JwtAdminGuard)
   @Patch(':productId/price')
   changePrice(
     @Param('productId', ParseIntPipe) productId: number,
@@ -118,6 +124,7 @@ export class ProductController {
   ) {
     return this.productService.changePriceOfProductById(productId, dto.price);
   }
+  @UseGuards(JwtAdminGuard)
   @Patch(':productId/image')
   @UseInterceptors(
     FileInterceptor('image', {

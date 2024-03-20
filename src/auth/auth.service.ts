@@ -10,6 +10,7 @@ import { eq } from 'drizzle-orm';
 import * as dayjs from 'dayjs';
 import { JwtService } from './jwt.service';
 import { PostgresError } from 'postgres';
+import { Roles } from 'src/utils/interfaces';
 @Injectable()
 export class AuthService {
   constructor(
@@ -38,6 +39,7 @@ export class AuthService {
       columns: {
         id: true,
         password: true,
+        role: true,
       },
     });
     if (!user) {
@@ -47,13 +49,13 @@ export class AuthService {
     if (!isMatch) {
       throw new UnauthorizedException('invalid credentials');
     }
-    const token_s = this.jwtService.generateTokens(user.id);
+    const token_s = this.jwtService.generateTokens(user.id, user.role);
     return token_s;
   }
-  async jwtRefresh(sub: number, expOfRefreshToken: number) {
+  async jwtRefresh(sub: number, expOfRefreshToken: number, role: Roles) {
     const currentTime = Date.now() / 1000;
     const diff = expOfRefreshToken - currentTime;
-    const tokens = this.jwtService.generateTokens(sub);
+    const tokens = this.jwtService.generateTokens(sub, role);
     const twoDays = 2 * 60 * 60 * 24;
     return diff < twoDays
       ? { msg: 'refresh token is expiring soon thus issued a new one', tokens }

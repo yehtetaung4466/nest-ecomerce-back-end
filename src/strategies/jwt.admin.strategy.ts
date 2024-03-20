@@ -5,7 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { TokenPayload } from 'src/utils/interfaces';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtAdminStrategy extends PassportStrategy(Strategy, 'jwt-admin') {
   constructor(config: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -13,7 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
   async validate(payload: TokenPayload) {
-    if (payload.type !== 'access' || payload.role !== 'common')
+    if (payload.type !== 'access' || payload.role !== 'admin')
       throw new UnauthorizedException('Unauthorized');
     return payload;
   }

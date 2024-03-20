@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { TokenPayload } from 'src/utils/interfaces';
+import { Roles, TokenPayload } from 'src/utils/interfaces';
 import * as jwt from 'jsonwebtoken';
 @Injectable()
 export class JwtService {
@@ -86,13 +86,13 @@ export class JwtService {
   //     };
   //   }
 
-  generateTokens(sub: number) {
-    const accessToken = this.getJwtAccessToken(sub);
-    const refreshToken = this.getJwtRefreshToken(sub);
+  generateTokens(sub: number, role: Roles) {
+    const accessToken = this.getJwtAccessToken(sub, role);
+    const refreshToken = this.getJwtRefreshToken(sub, role);
     return { accessToken, refreshToken };
   }
-  private getJwtAccessToken(sub: number) {
-    const payload: TokenPayload = { sub, type: 'access' };
+  private getJwtAccessToken(sub: number, role: Roles) {
+    const payload: TokenPayload = { sub, type: 'access', role };
     const accessToken = jwt.sign(
       payload,
       this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
@@ -101,8 +101,8 @@ export class JwtService {
     return accessToken;
   }
 
-  private getJwtRefreshToken(sub: number) {
-    const payload: TokenPayload = { sub, type: 'refresh' };
+  private getJwtRefreshToken(sub: number, role: Roles) {
+    const payload: TokenPayload = { sub, type: 'refresh', role };
     const refreshToken = jwt.sign(
       payload,
       this.configService.get('JWT_REFRESH_TOKEN_SECRET'),

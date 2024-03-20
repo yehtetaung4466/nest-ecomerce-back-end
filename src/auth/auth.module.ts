@@ -6,10 +6,17 @@ import { JwtService } from './jwt.service';
 import { DrizzleModule } from 'src/drizzle/drizzle.module';
 import { JwtStrategy } from 'src/strategies/jwt.strategy';
 import { JwtRefreshStrategy } from 'src/strategies/jwt.refresh.strategy';
+import { JwtAdminStrategy } from 'src/strategies/jwt.admin.strategy';
 
 @Module({
   imports: [PassportModule, DrizzleModule],
-  providers: [AuthService, JwtService, JwtStrategy, JwtRefreshStrategy],
+  providers: [
+    AuthService,
+    JwtService,
+    JwtStrategy,
+    JwtRefreshStrategy,
+    JwtAdminStrategy,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}
