@@ -6,6 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { DatabaseException } from './exceptions/databaseException';
 import { GeneralErrorException } from './exceptions/generalErrorException';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -17,6 +18,6 @@ async function bootstrap() {
     new DatabaseException(),
   );
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3000);
+  await app.listen(new ConfigService().get('PORT'));
 }
 bootstrap();
